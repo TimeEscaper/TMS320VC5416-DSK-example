@@ -7,29 +7,29 @@
 #include "dsk5416_pcm3002.h"
 #include "dsk5416_led.h"
 
-//Размер вектора, содержащего комплексные числа, действительная часть - на четных местах,
-//мнимая - на нечетных
+//Р Р°Р·РјРµСЂ РІРµРєС‚РѕСЂР°, СЃРѕРґРµСЂР¶Р°С‰РµРіРѕ РєРѕРјРїР»РµРєСЃРЅС‹Рµ С‡РёСЃР»Р°, РґРµР№СЃС‚РІРёС‚РµР»СЊРЅР°СЏ С‡Р°СЃС‚СЊ - РЅР° С‡РµС‚РЅС‹С… РјРµСЃС‚Р°С…,
+//РјРЅРёРјР°СЏ - РЅР° РЅРµС‡РµС‚РЅС‹С…
 #define SIGNAL_COMPL_SIZE 32
 #define SIGNAL_COMPL_HALF 16 // SIGNAL_COMPL_SIZE/2
 
-//Размер вектора, содержащего только действительные числа
+//Р Р°Р·РјРµСЂ РІРµРєС‚РѕСЂР°, СЃРѕРґРµСЂР¶Р°С‰РµРіРѕ С‚РѕР»СЊРєРѕ РґРµР№СЃС‚РІРёС‚РµР»СЊРЅС‹Рµ С‡РёСЃР»Р°
 #define SIGNAL_REAL_SIZE 16
 #define SIGNAL_REAL_HALF 8 //SIGNAL_REAL_SIZE/2
 
-#define SCALE_FACTOR 0 //Параметр Scale Factor для функций dsplib
+#define SCALE_FACTOR 0 //РџР°СЂР°РјРµС‚СЂ Scale Factor РґР»СЏ С„СѓРЅРєС†РёР№ dsplib
  
-#define LOUD_OFFSET 4 //Уменьшение громкости при воспроизведении
+#define LOUD_OFFSET 4 //РЈРјРµРЅСЊС€РµРЅРёРµ РіСЂРѕРјРєРѕСЃС‚Рё РїСЂРё РІРѕСЃРїСЂРѕРёР·РІРµРґРµРЅРёРё
 
-typedef DATA signal_real_t[SIGNAL_REAL_SIZE]; //Вектор, содержащий действительные числа
-typedef DATA signal_complex_t[SIGNAL_COMPL_SIZE]; //Вектор, содержащий комплексные числа
+typedef DATA signal_real_t[SIGNAL_REAL_SIZE]; //Р’РµРєС‚РѕСЂ, СЃРѕРґРµСЂР¶Р°С‰РёР№ РґРµР№СЃС‚РІРёС‚РµР»СЊРЅС‹Рµ С‡РёСЃР»Р°
+typedef DATA signal_complex_t[SIGNAL_COMPL_SIZE]; //Р’РµРєС‚РѕСЂ, СЃРѕРґРµСЂР¶Р°С‰РёР№ РєРѕРјРїР»РµРєСЃРЅС‹Рµ С‡РёСЃР»Р°
 
-#pragma DATA_SECTION(signal, ".fftdata1") //Выравнивание вектора (требование dsplib)
-signal_real_t signal = {0}; //Входной сигнал с кодека
+#pragma DATA_SECTION(signal, ".fftdata1") //Р’С‹СЂР°РІРЅРёРІР°РЅРёРµ РІРµРєС‚РѕСЂР° (С‚СЂРµР±РѕРІР°РЅРёРµ dsplib)
+signal_real_t signal = {0}; //Р’С…РѕРґРЅРѕР№ СЃРёРіРЅР°Р» СЃ РєРѕРґРµРєР°
 
-#pragma DATA_SECTION(spectrum, ".fftdata2") //Выравнивание вектора (требование dsplib)
-signal_complex_t spectrum = {0}; //Результат преобразования Фурье
+#pragma DATA_SECTION(spectrum, ".fftdata2") //Р’С‹СЂР°РІРЅРёРІР°РЅРёРµ РІРµРєС‚РѕСЂР° (С‚СЂРµР±РѕРІР°РЅРёРµ dsplib)
+signal_complex_t spectrum = {0}; //Р РµР·СѓР»СЊС‚Р°С‚ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёСЏ Р¤СѓСЂСЊРµ
 
-//Конфигурация кодека
+//РљРѕРЅС„РёРіСѓСЂР°С†РёСЏ РєРѕРґРµРєР°
 DSK5416_PCM3002_Config setup = {
     0x010d, // Set-Up Reg 0 - Left  channel DAC attenuation
     0x010d, // Set-Up Reg 1 - Right channel DAC attenuation
@@ -37,7 +37,7 @@ DSK5416_PCM3002_Config setup = {
     0x0000  // Set-Up Reg 3 - Codec data format control
 };
 
-//Чтение данных из кодека, т.е. получение входного действительного сигнала
+//Р§С‚РµРЅРёРµ РґР°РЅРЅС‹С… РёР· РєРѕРґРµРєР°, С‚.Рµ. РїРѕР»СѓС‡РµРЅРёРµ РІС…РѕРґРЅРѕРіРѕ РґРµР№СЃС‚РІРёС‚РµР»СЊРЅРѕРіРѕ СЃРёРіРЅР°Р»Р°
 void pcm_read(DSK5416_PCM3002_CodecHandle hCodec, signal_real_t data)
 {
 	int i;
@@ -47,8 +47,8 @@ void pcm_read(DSK5416_PCM3002_CodecHandle hCodec, signal_real_t data)
 	}
 }
 
-//Обновление сигнала "на лету": одновременно воспроизводим 
-//и сразу считываем новое значение из кодека
+//РћР±РЅРѕРІР»РµРЅРёРµ СЃРёРіРЅР°Р»Р° "РЅР° Р»РµС‚Сѓ": РѕРґРЅРѕРІСЂРµРјРµРЅРЅРѕ РІРѕСЃРїСЂРѕРёР·РІРѕРґРёРј 
+//Рё СЃСЂР°Р·Сѓ СЃС‡РёС‚С‹РІР°РµРј РЅРѕРІРѕРµ Р·РЅР°С‡РµРЅРёРµ РёР· РєРѕРґРµРєР°
 void pcm_refresh_signal(DSK5416_PCM3002_CodecHandle hCodec, signal_real_t signal)
 {
 	int i;
@@ -60,12 +60,12 @@ void pcm_refresh_signal(DSK5416_PCM3002_CodecHandle hCodec, signal_real_t signal
 	}
 }
 
-//Прямое БПФ с использованием свойства симметрии преобразования действительного сигнала
+//РџСЂСЏРјРѕРµ Р‘РџР¤ СЃ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРµРј СЃРІРѕР№СЃС‚РІР° СЃРёРјРјРµС‚СЂРёРё РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёСЏ РґРµР№СЃС‚РІРёС‚РµР»СЊРЅРѕРіРѕ СЃРёРіРЅР°Р»Р°
 void rfft_symm(signal_real_t signal, signal_complex_t spectrum)
 {
 	int i;
-	cbrev(signal, signal, SIGNAL_REAL_HALF); //Bit-reversal (требование dsplib)
-	rfft(signal, SIGNAL_REAL_SIZE, SCALE_FACTOR); //Прямое БПФ для действительного сигнала
+	cbrev(signal, signal, SIGNAL_REAL_HALF); //Bit-reversal (С‚СЂРµР±РѕРІР°РЅРёРµ dsplib)
+	rfft(signal, SIGNAL_REAL_SIZE, SCALE_FACTOR); //РџСЂСЏРјРѕРµ Р‘РџР¤ РґР»СЏ РґРµР№СЃС‚РІРёС‚РµР»СЊРЅРѕРіРѕ СЃРёРіРЅР°Р»Р°
 	for (i = 0; i < SIGNAL_REAL_SIZE; i++)
 	{
 		spectrum[i] = signal[i];
@@ -75,12 +75,12 @@ void rfft_symm(signal_real_t signal, signal_complex_t spectrum)
 	}
 }
 
-//Обратное БПФ для комплексного сигнала с выделением действительного сигнала
+//РћР±СЂР°С‚РЅРѕРµ Р‘РџР¤ РґР»СЏ РєРѕРјРїР»РµРєСЃРЅРѕРіРѕ СЃРёРіРЅР°Р»Р° СЃ РІС‹РґРµР»РµРЅРёРµРј РґРµР№СЃС‚РІРёС‚РµР»СЊРЅРѕРіРѕ СЃРёРіРЅР°Р»Р°
 void cifft_to_real(signal_complex_t spectrum, signal_real_t signal)
 {
 	int i;	
-	cbrev(spectrum, spectrum,SIGNAL_COMPL_HALF); //Bit-reversal (требование dsplib)
-	cifft(spectrum, SIGNAL_COMPL_HALF, SCALE_FACTOR); //Обартное БПФ для комплексного сигнала
+	cbrev(spectrum, spectrum,SIGNAL_COMPL_HALF); //Bit-reversal (С‚СЂРµР±РѕРІР°РЅРёРµ dsplib)
+	cifft(spectrum, SIGNAL_COMPL_HALF, SCALE_FACTOR); //РћР±Р°СЂС‚РЅРѕРµ Р‘РџР¤ РґР»СЏ РєРѕРјРїР»РµРєСЃРЅРѕРіРѕ СЃРёРіРЅР°Р»Р°
 	signal[0] = spectrum[0];
  	for (i = 1; i < SIGNAL_REAL_SIZE; i++)
 	{
@@ -88,7 +88,7 @@ void cifft_to_real(signal_complex_t spectrum, signal_real_t signal)
 	}
 }
 
-//Обработка полученного спектра: простой сдвиг частот
+//РћР±СЂР°Р±РѕС‚РєР° РїРѕР»СѓС‡РµРЅРЅРѕРіРѕ СЃРїРµРєС‚СЂР°: РїСЂРѕСЃС‚РѕР№ СЃРґРІРёРі С‡Р°СЃС‚РѕС‚
 void freq_shift(signal_complex_t spectrum)
 {
 	DATA last_real, last_imag;
@@ -112,35 +112,35 @@ void freq_shift(signal_complex_t spectrum)
 
 void UserTask()
 {
-	//Инициализация кодека
+	//РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РєРѕРґРµРєР°
 	DSK5416_PCM3002_CodecHandle hCodec = DSK5416_PCM3002_openCodec( 0, &setup );
 
-	//Инициализация DIP-переключателя
+	//РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ DIP-РїРµСЂРµРєР»СЋС‡Р°С‚РµР»СЏ
 	DSK5416_DIP_init();
 
-	//Инициализация входного сигнала
+	//РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РІС…РѕРґРЅРѕРіРѕ СЃРёРіРЅР°Р»Р°
 	pcm_read(hCodec, signal);
 
 	while (1)
 	{
-		rfft_symm(signal, spectrum); //БПФ
-		if (DSK5416_DIP_get(0) == 0) //Если переключатель находится в нужном положении
+		rfft_symm(signal, spectrum); //Р‘РџР¤
+		if (DSK5416_DIP_get(0) == 0) //Р•СЃР»Рё РїРµСЂРµРєР»СЋС‡Р°С‚РµР»СЊ РЅР°С…РѕРґРёС‚СЃСЏ РІ РЅСѓР¶РЅРѕРј РїРѕР»РѕР¶РµРЅРёРё
 		{
-			freq_shift(spectrum); //Сдвиг частот
+			freq_shift(spectrum); //РЎРґРІРёРі С‡Р°СЃС‚РѕС‚
 		}
-		cifft_to_real(spectrum, signal); //ОБПФ
+		cifft_to_real(spectrum, signal); //РћР‘РџР¤
 
-		//Воспроизводим полученный сигнал и считываем новый сигнал с кодека
+		//Р’РѕСЃРїСЂРѕРёР·РІРѕРґРёРј РїРѕР»СѓС‡РµРЅРЅС‹Р№ СЃРёРіРЅР°Р» Рё СЃС‡РёС‚С‹РІР°РµРј РЅРѕРІС‹Р№ СЃРёРіРЅР°Р» СЃ РєРѕРґРµРєР°
 		pcm_refresh_signal(hCodec, signal);
 	}
 }
 
 void main()
 {
-	//Инициализация Chip Support Library (CSL)
+	//РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ Chip Support Library (CSL)
 	CSL_init();
 	cslCfgInit();
 	
-	//Инициализация Board Support Library (BSL)
+	//РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ Board Support Library (BSL)
     DSK5416_init();
 }
