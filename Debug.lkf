@@ -1,0 +1,6 @@
+-z -q -c -o"./Debug/tone.out" -x -i"C:/CCStudio_v3.3/c5400/dsk5416/lib" -i"C:/CCStudio_v3.3/bios_5_31_02/packages/ti/rtdx/lib/C5400" -i"C:/CCStudio_v3.1/c5400/dsk5416/lib" -i"C:/CCStudio_v3.3/C5400/dsplib" -i"C:/CCStudio_v3.3/C5400/xdais/lib" -i"C:/CCStudio_v3.3/C5400/csl/lib" -i"C:/CCStudio_v3.3/bios_5_31_02/packages/ti/bios/lib" -i"C:/CCStudio_v3.3/bios_5_31_02/packages/ti/rtdx/lib/c5400" -i"C:/CCStudio_v3.3/C5400/cgtools/lib" -l"dsk5416f.lib" -l"csl5416x.lib" -l"54xdspf.lib"
+"C:\CCStudio_v3.1\examples\dsk5416\bsl\tone\Debug\tone.obj"
+"C:\CCStudio_v3.1\examples\dsk5416\bsl\tone\Debug\tonecfg.obj"
+"C:\CCStudio_v3.1\examples\dsk5416\bsl\tone\Debug\tonecfg_c.obj"
+"C:\CCStudio_v3.1\examples\dsk5416\bsl\tone\Debug\tonecfg_csl.obj"
+"C:\CCStudio_v3.1\examples\dsk5416\bsl\tone\tonecfg.cmd"

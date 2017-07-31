@@ -1,0 +1,40 @@
+/*
+ *  ======== build-tone.tcf ========
+ *
+ *! Revision History
+ *! ================
+ *! 23-Dec-2002 mw modified for tconf platform definition in CCS 2.2
+ *! 21-Feb-2002 mw Created.
+ *
+ * To create tone.cdb, add %TI_DIR$\bin\utilities\tconf path to Dosrun.bat
+ * then type the following at the command line:
+ *
+ *  >>  tconf -Dconfig.importPath="%TI_DIR%\c5400\dsk5416\include" -Dconfig.tiRoot="%TI_DIR%" build-tone.tcf
+ *
+ */
+
+/* Load seed file */
+utils.loadPlatform("Dsk5416");
+
+/* Get program objects */
+utils.getProgObjs(prog);
+
+/* Enable all heaps, RTDX, Real Time Analysis, and the Task Mangager */
+bios.enableFullBios(prog);
+
+/* Switch to far memory model */
+GBL.CALLMODEL = "far";
+
+/* Disable Real Time Analysis */
+GBL.ENABLEINST = false;
+GBL.ENABLEALLTRC = false;
+
+/* MCBSP configuration from bsl c5400\dsk5416\include */
+utils.importFile("dsk5416_pcm3002.tci");
+
+/* Add UserTask() as first non-idle task */
+var userTask = TSK.create("userTask");
+userTask.fxn = prog.extern("UserTask");
+
+/* Generate CDB file */
+prog.gen("tone.cdb");

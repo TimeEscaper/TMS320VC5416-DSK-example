@@ -1,0 +1,42 @@
+; Code Composer Project File, Version 2.0 (do not modify or remove this line)
+
+[Project Settings]
+ProjectName="Audio"
+ProjectDir="C:\CCStudio_v3.1\examples\dsk5416\bsl\tone\"
+ProjectType=Executable
+CPUFamily=TMS320C54XX
+Tool="Compiler"
+Tool="CustomBuilder"
+Tool="DspBiosBuilder"
+Tool="Linker"
+Config="Debug"
+Config="Release"
+
+[Source Files]
+Source="tone.c"
+Source="tone.tcf"
+Source="tonecfg_csl.c"
+Source="tonecfg.cmd"
+
+[Generated Files]
+Source="tonecfg.s54"
+Source="tonecfg_c.c"
+
+["Compiler" Settings: "Debug"]
+Options=-g -q -fr".\Debug" -i"." -i"C:\CCStudio_v3.1\c5400\dsk5416\include" -i"C:\CCStudio_v3.3\C5400\dsplib\include" -d"_DEBUG" -mf
+
+["Compiler" Settings: "Release"]
+Options=-q -o2 -fr".\Release" -i"." -i"$(Install_dir)\c5400\dsk5416\include" -mf
+
+["DspBiosBuilder" Settings: "Debug"]
+Options=-v548
+
+["DspBiosBuilder" Settings: "Release"]
+Options=-v54
+
+["Linker" Settings: "Debug"]
+Options=-q -c -o".\Debug\tone.out" -x -i"$(Install_dir)\c5400\dsk5416\lib" -i"%BIOS_INSTALL_DIR%/packages/ti/rtdx/lib/C5400" -i"C:\CCStudio_v3.1\c5400\dsk5416\lib" -i"C:\CCStudio_v3.3\C5400\dsplib" -l"dsk5416f.lib" -l"csl5416x.lib" -l"54xdspf.lib"
+
+["Linker" Settings: "Release"]
+Options=-q -c -o".\Release\Audio.out" -x -i"$(Install_dir)\c5400\dsk5416\lib" -l"dsk5416f.lib"
+

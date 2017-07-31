@@ -1,0 +1,188 @@
+environment["ti.bios.oldMemoryNames"] = true;
+
+/* loading the generic platform */
+var params = {};
+params.clockRate = 160.000000;
+params.deviceName = "5416";
+params.catalogName = "ti.catalog.c5400";
+var ext_mem = [];
+ext_mem[0] = {
+    comment: "This object defines space for the data off-chip memory",
+    name: "EDATA",
+    base: 0x8000,
+    len:  0x4000,
+    space: "data"
+};
+ext_mem[1] = {
+    comment: "This object defines space for the program off-chip memory",
+    name: "EPROG",
+    base: 0xc000,
+    len:  0x3f80,
+    space: "code"
+};
+params.mem = ext_mem;
+
+params.regs = {};
+params.regs.clkmd = 0x9007;
+params.regs.pmst = 0x7fac;
+params.regs.swwsr = 0x4492;
+params.regs.swcr = 0x0;
+params.regs.bscr = 0xa002;
+utils.loadPlatform("ti.platforms.generic", params);
+
+
+/* enabling DSP/BIOS components */
+bios.GBL.ENABLEINST = true;
+bios.MEM.NOMEMORYHEAPS = false;
+bios.RTDX.ENABLERTDX = true;
+bios.HST.HOSTLINKTYPE = "RTDX";
+bios.TSK.ENABLETSK = true;
+bios.GBL.ENABLEALLTRC = true;
+
+bios.IDATA.createHeap = true;
+bios.IDATA.heapSize = 0x0400;
+
+bios.MEM.BIOSSEG = prog.get("IPROG");
+bios.MEM.SYSINITSEG = prog.get("IPROG");
+bios.MEM.HWISEG = prog.get("IPROG");
+bios.MEM.TEXTSEG = prog.get("IPROG");
+
+if ("SARAM03" in bios.MEM.instances()) {
+    bios.SARAM03.destroy();
+}
+
+if ("SARAM47" in bios.MEM.instances()) {
+    bios.SARAM47.destroy();
+}
+
+if ("DARAM47" in bios.MEM.instances()) {
+    bios.DARAM47.destroy();
+}
+
+bios.MEM.BIOSOBJSEG = prog.get("IDATA");
+bios.MEM.MALLOCSEG = prog.get("IDATA");
+bios.TSK.STACKSEG = prog.get("IDATA");
+
+
+/* applying user changes */
+bios.DARAM47 = bios.MEM.create("DARAM47");
+
+bios.DARAM47.comment = "On-Chip DARAM4-7 in data memory";
+
+bios.DARAM47.base = 0x8000;
+
+bios.DARAM47.len = 0x8000;
+
+bios.DARAM47.createHeap = 0;
+
+bios.SARAM03 = bios.MEM.create("SARAM03");
+
+bios.SARAM03.comment = "On-Chip SARAM0-3 in program memory";
+
+bios.SARAM03.base = 0x28000;
+
+bios.SARAM03.len = 0x8000;
+
+bios.SARAM03.createHeap = 0;
+
+bios.SARAM03.space = "code";
+
+bios.SARAM47 = bios.MEM.create("SARAM47");
+
+bios.SARAM47.comment = "On-Chip SARAM4-7 in program memory";
+
+bios.SARAM47.base = 0x38000;
+
+bios.SARAM47.len = 0x8000;
+
+bios.SARAM47.createHeap = 0;
+
+bios.SARAM47.space = "code";
+
+bios.userTask = bios.TSK.create("userTask");
+
+bios.MEM.BIOSSEG = prog.get("SARAM03");
+
+bios.MEM.SYSINITSEG = prog.get("SARAM03");
+
+bios.MEM.TRCDATASEG = prog.get("SARAM03");
+
+bios.MEM.BIOSOBJSEG = prog.get("MEM_NULL");
+
+bios.MEM.MALLOCSEG = prog.get("MEM_NULL");
+
+bios.MEM.TEXTSEG = prog.get("SARAM03");
+
+bios.MEM.SWITCHSEG = prog.get("SARAM03");
+
+bios.MEM.HWISEG = prog.get("SARAM03");
+
+bios.GBL.ENABLEALLTRC = 0;
+
+bios.GBL.ENABLEINST = 0;
+
+bios.GBL.CALLMODEL = "far";
+
+bios.GBL.MODIFYCLKMD = 1;
+
+bios.GBL.MODIFYSWCR = 1;
+
+bios.GBL.LOWERPMST = 0x2c;
+
+bios.VECT.base = 0x7f80;
+
+bios.IPROG.comment = "On-Chip DARAM0-3 in program memory";
+
+bios.IPROG.base = 0x7080;
+
+bios.IPROG.len = 0xf00;
+
+bios.TSK.STACKSEG = prog.get("MEM_NULL");
+
+bios.userTask.fxn = prog.extern("UserTask");
+
+bios.userTask.stackMemSeg = prog.get("IDATA");
+
+bios.CLK.MICROSECONDS = 999.9938;
+
+bios.IDATA.comment = "On-Chip DARAM0-3 in data memory";
+
+bios.IDATA.len = 0x7000;
+
+bios.IDATA.createHeap = 0;
+
+bios.MEM.ENABLELOADADDR = 1;
+
+if (bios.MEM.LOADTRCDATASEG == prog.get("EPROG")) {
+    bios.MEM.LOADTRCDATASEG = prog.get("VECT");
+}
+
+if (bios.MEM.SYSMEMSEG == prog.get("EPROG")) {
+    bios.MEM.SYSMEMSEG = prog.get("VECT");
+}
+
+bios.MEM.ENABLELOADADDR = 0;
+
+bios.EPROG.destroy();
+
+bios.MEM.ENABLELOADADDR = 1;
+
+if (bios.MEM.LOADTRCDATASEG == prog.get("EDATA")) {
+    bios.MEM.LOADTRCDATASEG = prog.get("VECT");
+}
+
+if (bios.MEM.SYSMEMSEG == prog.get("EDATA")) {
+    bios.MEM.SYSMEMSEG = prog.get("VECT");
+}
+
+bios.MEM.ENABLELOADADDR = 0;
+
+bios.EDATA.destroy();
+
+bios.MEM.NOMEMORYHEAPS = 1;
+
+// !GRAPHICAL_CONFIG_TOOL_SCRIPT_INSERT_POINT!
+
+if (config.hasReportedError == false) {
+    prog.gen();
+}

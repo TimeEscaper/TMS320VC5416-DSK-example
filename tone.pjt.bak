@@ -1,0 +1,41 @@
+; Code Composer Project File, Version 2.0 (do not modify or remove this line)
+
+[Project Settings]
+ProjectName="Audio"
+ProjectDir="$(Install_dir)\examples\dsk5416\bsl\tone\"
+ProjectType=Executable
+CPUFamily=TMS320C54XX
+Tool="Compiler"
+Tool="CustomBuilder"
+Tool="DspBiosBuilder"
+Tool="Linker"
+Config="Debug"
+Config="Release"
+
+[Source Files]
+Source="tone.c"
+Source="tone.cdb"
+
+[Generated Files]
+Source="tonecfg.cmd"
+Source="tonecfg.s54"
+Source="tonecfg_c.c"
+
+["Compiler" Settings: "Debug"]
+Options=-g -q -fr".\Debug" -i"." -i"$(Install_dir)\c5400\dsk5416\include" -d"_DEBUG" -mf
+
+["Compiler" Settings: "Release"]
+Options=-q -o2 -fr".\Release" -i"." -i"$(Install_dir)\c5400\dsk5416\include" -mf
+
+["DspBiosBuilder" Settings: "Debug"]
+Options=-v54
+
+["DspBiosBuilder" Settings: "Release"]
+Options=-v54
+
+["Linker" Settings: "Debug"]
+Options=-q -c -o".\Debug\tone.out" -x -i"$(Install_dir)\c5400\dsk5416\lib" -l"dsk5416f.lib"
+
+["Linker" Settings: "Release"]
+Options=-q -c -o".\Release\Audio.out" -x -i"$(Install_dir)\c5400\dsk5416\lib" -l"dsk5416f.lib"
+

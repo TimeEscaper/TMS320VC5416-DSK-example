@@ -1,0 +1,18 @@
+Application: C:/CCStudio_v3.1/examples/dsk5416/bsl/tone/tone.cdb
+Original seed file: c:/ccstudio_v3.3/bios_5_31_02/packages/ti/bios/config/update/4.90.270/c54xx.cdb
+Loading application CDB file
+Device name: 5416
+Catalog: ti.catalog.c5400
+Generating CSL files
+Unloading the application CDB file
+Loading original seed: c:/ccstudio_v3.3/bios_5_31_02/packages/ti/bios/config/update/4.90.270/c54xx.cdb
+Finding user changes
+Loading new seed file
+New seed: c:/ccstudio_v3.3/bios_5_31_02/packages/ti/bios/config/cdb/c54xx.cdb
+Applying changes
+Warning: Field CSLNAME no longer exists in cdb file.
+Saving original C:/CCStudio_v3.1/examples/dsk5416/bsl/tone/tone.cdb in C:/CCStudio_v3.1/examples/dsk5416/bsl/tone/tone.cdb.Wed_Jul_12_05.09.22_2017
+Creating TCF file: C:/CCStudio_v3.1/examples/dsk5416/bsl/tone/tone.tcf
+Tconf search path information is required for running the generated tcf file.
+The search path info for the Tconf.exe command line has been saved in
+tcfopts.dat.
